@@ -1,0 +1,82 @@
+﻿
+@model X.PagedList.IPagedList<ContactManager.Models.Contact>
+@using X.PagedList.Mvc.Core;
+
+@{
+    ViewData["Title"] = "Contacts";
+}
+
+<h1>Contacts</h1>
+
+<p>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#modal" data-url="@Url.Action("Create", "Contacts")">Add Contact</button>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Phone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Address)
+            </th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    <button class="btn btn-secondary" data-toggle="modal" data-target="#modal" data-url="@Url.Action("Edit", "Contacts", new { id = item.Id })">Edit</button>
+                    <button class="btn btn-info" data-toggle="modal" data-target="#modal" data-url="@Url.Action("Details", "Contacts", new { id = item.Id })">Details</button>
+                    <button class="btn btn-danger" data-toggle="modal" data-target="#modal" data-url="@Url.Action("Delete", "Contacts", new { id = item.Id })">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="text-center">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }), new PagedListRenderOptions
+    {
+        DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+        DisplayLinkToLastPage = PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+        DisplayLinkToNextPage = PagedListDisplayMode.Always
+    })
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('body').on('click', '[data-toggle="modal"]', function (e) {
+                e.preventDefault();
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    $('#modal .modal-content').html(data);
+                    $('#modal').modal('show');
+                    // Re-apply validation scripts after content replacement
+                    $.validator.unobtrusive.parse('#createForm');
+                });
+            });
+        });
+    </script>
+}

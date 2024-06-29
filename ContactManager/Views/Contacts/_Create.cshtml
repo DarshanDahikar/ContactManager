@@ -1,0 +1,95 @@
+﻿@model ContactManager.Models.Contact
+
+<div class="modal-header">
+    <h5 class="modal-title">Create Contact</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <form id="createForm" method="post" action="@Url.Action("Create", "Contacts")">
+        @Html.AntiForgeryToken() <!-- Anti-forgery token -->
+
+        <div class="form-group">
+            <label asp-for="Name" class="control-label"></label>
+            <input asp-for="Name" class="form-control" id="Name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Email" class="control-label"></label>
+            <input asp-for="Email" class="form-control" id="Email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Phone" class="control-label"></label>
+            <input asp-for="Phone" class="form-control" />
+            <span asp-validation-for="Phone" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Address" class="control-label"></label>
+            <input asp-for="Address" class="form-control" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Create</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $("#createForm").validate({
+                rules: {
+                    Name: {
+                        required: true
+                    },
+                    Email: {
+                        required: true,
+                        email: true
+                    },
+                    Phone: {
+                        required: true
+                    },
+                    Address: {
+                        required: true
+                    }
+                },
+                messages: {
+                    Name: {
+                        required: "Please enter a name"
+                    },
+                    Email: {
+                        required: "Please enter an email address",
+                        email: "Please enter a valid email address"
+                    },
+                    Phone: {
+                        required: "Please enter a phone number"
+                    },
+                    Address: {
+                        required: "Please enter an address"
+                    }
+                },
+                submitHandler: function (form) {
+                    $.ajax({
+                        type: 'POST',
+                        url: $(form).attr('action'),
+                        data: $(form).serialize(),
+                        success: function (response) {
+                            if (response.success) {
+                                window.location.href = response.redirectUrl; // Redirect to the index page
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText);
+                            alert('An error occurred: ' + xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

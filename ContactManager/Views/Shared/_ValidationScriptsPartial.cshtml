@@ -1,0 +1,22 @@
+﻿@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function checkDuplicateEmail(email, callback) {
+            console.log('Checking duplicate email:', email); // Debug statement
+
+            $.ajax({
+                url: '@Url.Action("CheckDuplicate", "Contacts")',
+                type: 'GET',
+                data: { email: email },
+                success: function (data) {
+                    console.log('AJAX call success:', data); // Debug statement
+                    callback(data.emailExists);
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX call error:', status, error); // Debug statement
+                    callback(false);
+                }
+            });
+        }
+    </script>
+}
